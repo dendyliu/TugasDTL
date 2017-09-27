@@ -55,39 +55,28 @@ public class MyID3 extends Classifier {
   }
 
   private void makeTree(Instances data) throws Exception {
-     if (data.numAttributes()-1  < 0){
-    	System.out.println("In makeLeaf 2");
+    if (data.numAttributes()-1  < 1){
     	makeLeaf(data);
     	return;
     }
-    System.out.println(data.numAttributes());
     if(isOneClassExample(data)){
-    	System.out.println("In makeLeaf 1");
     	makeLeaf(data);
-    	System.out.println("In makeLeaf 1 done");
-    	return;
-    }  else{
+    }else{
     	m_Attribute = chooseBestAttribute(data);
-    	System.out.println("In makeNode ");
-	    System.out.println("In Split ");
 	    Instances[] splitData = splitData(data, m_Attribute);
-	    System.out.println("In Sucessors ");
 	    m_Successors = new MyID3[m_Attribute.numValues()];
 	    for (int j = 0; j < m_Attribute.numValues(); j++) {
-	      if(splitData[j].numInstances() < 0){
-	      	System.out.println("Sucessors "+j+"example kosong");
-	        m_Successors[j] = new MyID3();
-	      	m_Successors[j].makeLeaf(data);
-	      } 
-		  else{
-		  	System.out.println("Sucessors "+j);
-		  	m_Successors[j] = new MyID3();
-		    m_Successors[j].makeTree(splitData[j]);
-		  }
+	    	m_Successors[j] = new MyID3();
+	        if(splitData[j].numInstances() <= 0){
+		      	m_Successors[j].makeLeaf(data);
+	      	} 
+		  	else{
+			    m_Successors[j].makeTree(splitData[j]);
+		  	}
 	    }
 	}
   }
-
+  //Cek if data example just just have one class distribution
   private boolean isOneClassExample(Instances data) throws Exception{
   	double[] classDistribution = new double[data.numClasses()];
   	Enumeration instEnum = data.enumerateInstances();
@@ -114,7 +103,8 @@ public class MyID3 extends Classifier {
     m_ClassValue = Utils.maxIndex(m_Distribution);
     m_ClassAttribute = data.classAttribute();
   }
-
+  
+  //Choose best attribute for node
   private Attribute chooseBestAttribute(Instances data) throws Exception{
   	// Compute attribute with maximum information gain.
     double[] infoGains = new double[data.numAttributes()];
@@ -156,31 +146,36 @@ public class MyID3 extends Classifier {
     return entropy + Utils.log2(data.numInstances());
   }
 
-  private Instances[] splitData(Instances data, Attribute att) throws Exception {
-    Instances[] splitData = new Instances[att.numValues()];
-    for (int j = 0; j < att.numValues(); j++) {
-      splitData[j] = new Instances(data, data.numInstances());
-    }
-    Enumeration instEnum = data.enumerateInstances();
-    while (instEnum.hasMoreElements()) {
-      Instance inst = (Instance) instEnum.nextElement();
-      splitData[(int) inst.value(att)].add(inst);
-    }
-    for (int i = 0; i < splitData.length; i++) {
-      splitData[i].compactify();
-      splitData[i] = removeAttributeNode(splitData[i],att.index());
-    }
+  private Instances[] splitData(Instances data, Attribute att) throws Exception{
+  	Instances[] splitData = new Instances[att.numValues()];
+  	for (int j = 0; j < att.numValues(); j++) {
+		splitData[j] = new Instances(data, data.numInstances());
+	}
+	Enumeration instEnum = data.enumerateInstances();
+	while (instEnum.hasMoreElements()) {
+	   Instance inst = (Instance) instEnum.nextElement();
+	   splitData[(int) inst.value(att)].add(inst);
+	}
+	for (int i = 0; i < splitData.length; i++) {
+	    splitData[i].compactify();
+	    splitData[i] = removeAttributeNode(splitData[i],att.index());
+	}
     return splitData;
   }
   //Delete attribute that become node
   private Instances removeAttributeNode(Instances oldData,int attIdx) throws Exception{
-  	Remove remover = new Remove();
-  	String[] optionsRemove = new String[2];
-  	optionsRemove[0] = "-R";
-  	optionsRemove[1] = String.valueOf(attIdx+1);
-  	remover.setOptions(optionsRemove);
-	remover.setInputFormat(oldData);
-	Instances newData = Filter.useFilter(oldData,remover);
+  	Instances newData = null;
+  	try{
+		Remove remover = new Remove();
+	  	String[] optionsRemove = new String[2];
+	  	optionsRemove[0] = "-R";
+	  	optionsRemove[1] = String.valueOf(attIdx+1);
+	  	remover.setOptions(optionsRemove);
+		remover.setInputFormat(oldData);
+		newData = Filter.useFilter(oldData,remover);
+  	} catch(Exception e){
+  		System.out.println("Exeption di removeAttribute "+e);
+  	}
 	return newData;
   }
 
@@ -204,8 +199,29 @@ public class MyID3 extends Classifier {
       return m_Distribution;
     } else { 
       return m_Successors[(int) instance.value(m_Attribute)].
-        distributionForInstance(instance);
+        distributionForInstance(removeAtrInstance(instance,m_Attribute.index()).firstInstance());
     }
+  }
+
+  public Instances removeAtrInstance(Instance data,int attIdx){
+  	Instances dataSet = new Instances(data.dataset());
+  	dataSet.add(data);
+  	Instances newDataSet = null;
+  	try {
+	  	Remove remover = new Remove();
+		String[] optionsRemove = new String[2];
+		optionsRemove[0] = "-R";
+		optionsRemove[1] = String.valueOf(attIdx+1);
+		remover.setOptions(optionsRemove);
+	    remover.setInputFormat(dataSet);
+	    newDataSet = Filter.useFilter(dataSet,remover);
+	    newDataSet.compactify();
+  	} catch(Exception e){
+  		System.out.println(e);
+  	}
+  	return newDataSet;
+
+  
   }
   public static void main(String[] args) {
     runClassifier(new MyID3(), args);

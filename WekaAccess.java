@@ -31,9 +31,10 @@ public class WekaAccess {
 			System.out.println("Instances:                  "+newData.numInstances());
 			System.out.println("Attributes:                 "+newData.numAttributes());
 			for(int i = 0; i < newData.numAttributes()	 - 1; i++){
-		    System.out.println("Attribute Index-"+(i+1)+":          "+newData.attribute(i).index());
+		    System.out.println("Attribute Index-"+(i+1)+":          "+newData.attribute(i).name());
 			}
 			System.out.println("Attribute Class:            "+newData.classAttribute().name());
+			System.out.println("Remove attribute done!\n");
 			return newData;
 		} catch(Exception e){
 			System.out.println(e);
@@ -81,7 +82,8 @@ public class WekaAccess {
 			eval = new Evaluation(data);
 			eval.crossValidateModel(cls,data,Integer.parseInt(optionsEvaluation[1]),new Random(1));
 		} else if(Integer.parseInt(optionsEvaluation[0]) == 2){
-			int trainSize = (int) Math.round(data.numInstances() * Integer.parseInt(optionsEvaluation[1])/100);
+			int trainSize = (int) Math.round(data.numInstances() * Double.parseDouble(optionsEvaluation[1])/100);
+			System.out.println(trainSize);
 			int testSize = data.numInstances() - trainSize;
 			Instances train_data = new Instances(data, 0, trainSize);
 			Instances test_data = new Instances(data, trainSize, testSize);
@@ -251,7 +253,7 @@ public class WekaAccess {
 			System.out.println("Instances:                  "+data.numInstances());
 			System.out.println("Attributes:                 "+data.numAttributes());
 			for(int i = 0; i < data.numAttributes()	 - 1; i++){
-		    System.out.println("Attribute Index-"+(i+1)+":          "+data.attribute(i).index());
+		    System.out.println("Attribute Index-"+(i+1)+":          "+data.attribute(i).name());
 			}
 			System.out.println("Attribute Class:            "+data.classAttribute().name());
 			System.out.println("===================================================================");
