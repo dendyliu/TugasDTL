@@ -3,11 +3,13 @@ import java.util.*;
 import weka.classifiers.*;
 import weka.classifiers.trees.*;
 import weka.core.Instances;
+import weka.core.SerializationHelper;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.core.converters.ConverterUtils.DataSource;
 public class WekaAccess {
+//================================METHOD FOR DO THE SPECIFICATION TO ACCESS WEKA==============================================//
 	public static Instances loadData (String file_data_name){
 		Instances data = null;
 		try{
@@ -57,17 +59,21 @@ public class WekaAccess {
 		return oldData;
 	}
 
-	public static Classifier assignClassifierModel(String[] optionsClassifier){
+	public static Classifier assignClassifierModel(String[] optionsClassifier,String[] fn,String[] optionsSaveModel){
 		Classifier classifier = null;
 		try {
 			if(Integer.parseInt(optionsClassifier[0]) == 1){
 				classifier = new Id3();
+				optionsSaveModel[1] = fn[0]+"_Id3.model";
 			} else if(Integer.parseInt(optionsClassifier[0]) == 2){
 				classifier = new Id3();
+				optionsSaveModel[1] = fn[0]+"_C45.model";
 			} else if(Integer.parseInt(optionsClassifier[0]) == 3){
 				classifier = new MyID3();
+				optionsSaveModel[1] = fn[0]+"_MyID3.model";
 			} else if(Integer.parseInt(optionsClassifier[0]) == 4){
 				classifier = new Id3();
+				optionsSaveModel[1] = fn[0]+"_MyC45.model";
 			}
 		} catch(Exception e){
 			System.out.println("Fail to build calssifier! " + e);
@@ -82,8 +88,8 @@ public class WekaAccess {
 			eval = new Evaluation(data);
 			eval.crossValidateModel(cls,data,Integer.parseInt(optionsEvaluation[1]),new Random(1));
 		} else if(Integer.parseInt(optionsEvaluation[0]) == 2){
+			data.randomize(new java.util.Random(1));
 			int trainSize = (int) Math.round(data.numInstances() * Double.parseDouble(optionsEvaluation[1])/100);
-			System.out.println(trainSize);
 			int testSize = data.numInstances() - trainSize;
 			Instances train_data = new Instances(data, 0, trainSize);
 			Instances test_data = new Instances(data, trainSize, testSize);
@@ -118,7 +124,33 @@ public class WekaAccess {
 		 System.out.println("Proccess classify unseen data finish!");
 		 System.out.println("Result file in data\\result_unseen\\classified_"+optionsClassify[1]);
 	}
-
+	public static void doEvalFromLoadModel(Instances data, String[] optionsLoadModel,
+												String[] optionsEvaluation,Classifier cls) throws Exception{
+		System.out.println("Loading your classifier . . . . . . . . . . . . .");
+		cls = (Classifier) SerializationHelper.read("data\\model\\"+optionsLoadModel[1]);
+		Evaluation eval = null;
+		if(Integer.parseInt(optionsEvaluation[0]) == 1){
+			eval = new Evaluation(data);
+			eval.crossValidateModel(cls,data,Integer.parseInt(optionsEvaluation[1]),new Random(1));
+		} else if(Integer.parseInt(optionsEvaluation[0]) == 2){
+			data.randomize(new java.util.Random(1));
+			int trainSize = (int) Math.round(data.numInstances() * Double.parseDouble(optionsEvaluation[1])/100);
+			int testSize = data.numInstances() - trainSize;
+			Instances train_data = new Instances(data, 0, trainSize);
+			Instances test_data = new Instances(data, trainSize, testSize);
+			eval = new Evaluation(train_data);
+			eval.evaluateModel(cls,test_data);
+		}else if(Integer.parseInt(optionsEvaluation[0]) == 3){
+			Instances test_data = new Instances(new BufferedReader(new FileReader("data\\test\\"+optionsEvaluation[1])));
+			eval = new Evaluation(data);
+			eval.evaluateModel(cls,test_data);
+		} 
+		System.out.print(eval.toSummaryString("\nEvaluation Results\n===================================================================", false));
+		System.out.println("===================================================================");
+		System.out.println("Load classifier finish!");
+	}
+//============================================================================================================================//
+//================================METHOD FOR GET OPTIONS MENU=================================================================//
 	public static void printAllDataFile(String[] fn){
 		Scanner scan =  new Scanner(System.in);
 		File folder = new File("data\\seen");
@@ -145,6 +177,7 @@ public class WekaAccess {
 			return;
 		} else {
 			System.out.println("Wrong command!");
+			isRemoveAttribute(optionsRemove);
 		}
 	}
 
@@ -158,6 +191,7 @@ public class WekaAccess {
 			return;
 		} else {
 			System.out.println("Wrong command!");
+			isResampleData(optionsResample);
 		}
 	}
 
@@ -189,7 +223,18 @@ public class WekaAccess {
 			optionsEvaluation[1] = String.valueOf(scan.nextLine());
 		}
 	}
-
+	public static void isSaveModel(String[] optionsSaveModel){
+		Scanner scan = new Scanner(System.in);
+		String isSaveModel = scan.nextLine();
+		if(isSaveModel .toLowerCase().charAt(0)=='y'){
+			optionsSaveModel[0] = "Y";
+		}else if(isSaveModel.toLowerCase().charAt(0)=='n'){
+			return;
+		} else {
+			System.out.println("Wrong command!");
+			isSaveModel(optionsSaveModel);
+		}
+	}
 	public static void isClassifyUnseenData(String[] optionsClassify){
 		Scanner scan = new Scanner(System.in);
 		String isClassify = scan.nextLine();
@@ -209,11 +254,38 @@ public class WekaAccess {
 			return;
 		} else {
 			System.out.println("Wrong command!");
+			isClassifyUnseenData(optionsClassify);
 		}
 	}
 
-	public static void runMenu(String[] fn, String[] optionsRemove, String[] optionsResample, String[] optionsClassifier,
-																String[] optionsEvaluation,String[] optionsClassify){
+	public static void isLoadModel(String[] optionsLoadModel){
+		Scanner scan = new Scanner(System.in);
+		String isLoad = scan.nextLine();
+		if(isLoad.toLowerCase().charAt(0)=='y'){
+			System.out.println("");
+			System.out.println("  Choose your model:");
+			File folder = new File("data\\model");
+			File[] listOfFiles = folder.listFiles();
+		    for (int i = 0; i < listOfFiles.length; i++) {
+		      if (listOfFiles[i].isFile()) {
+		        System.out.println("  -Data "+(i+1)+": " + listOfFiles[i].getName());
+		      } 
+	    	}
+	    	System.out.print("   Your choose: ");
+	    	int a = scan.nextInt();
+	    	optionsLoadModel[0] = "Y";
+	    	optionsLoadModel[1] = listOfFiles[a-1].getName().toString();
+		}else if(isLoad.toLowerCase().charAt(0)=='n'){
+			return;
+		} else {
+			System.out.println("Wrong command!");
+			isLoadModel(optionsLoadModel);
+		}
+	}
+//============================================================================================================================//
+	public static void runMenu(String[] fn, String[] optionsRemove, String[] optionsResample, 
+								String[] optionsClassifier,String[] optionsEvaluation,String[] optionsSaveModel,
+								String[] optionsClassify, String[] optionsLoadModel){
 		System.out.println("==================================================");
 		System.out.println("       Tubes 1B IMPLEMENTING WEKA IN JAVA ");
 		System.out.println("==================================================");
@@ -227,15 +299,33 @@ public class WekaAccess {
 		System.out.print("3.Using Resample? (Y/N) ");
 		isResampleData(optionsResample);
 		System.out.println("");
-		System.out.println("4.Choose your classifier:");
-		printAllClassifierOption(optionsClassifier);
-		System.out.println("");
-		System.out.println("5.Choose your evaluation type:");
-		printAllEvaluationOption(optionsEvaluation);
-		System.out.println("");
-		System.out.print("6.Want to classify unseen data? (Y/N) ");
-		isClassifyUnseenData(optionsClassify);
+		System.out.print("4.Load model from file? (Y/N) ");
+		isLoadModel(optionsLoadModel);
+		if(optionsLoadModel[0]=="Y"){
+			System.out.println("");
+			System.out.println("5.Choose your evaluation type:");
+			printAllEvaluationOption(optionsEvaluation);
+			System.out.println("");
+			System.out.print("6.Want to classify unseen data? (Y/N) ");
+			isClassifyUnseenData(optionsClassify);
+		}else{
+		  	System.out.println("");
+			System.out.println("5.Choose your classifier:");
+			printAllClassifierOption(optionsClassifier);
+			System.out.println("");
+			System.out.println("6.Choose your evaluation type:");
+			printAllEvaluationOption(optionsEvaluation);
+			System.out.println("");
+			System.out.print("7.Do you want to save model? (Y/N) ");
+			isSaveModel(optionsSaveModel);
+			System.out.println("");
+			System.out.print("8.Want to classify unseen data? (Y/N) ");
+			isClassifyUnseenData(optionsClassify);
+		}
+		
 	}
+
+
 	public static void main (String args[]){
 		String[] fn= new String[2];
 		String[] optionsRemove = new String[2];
@@ -243,8 +333,11 @@ public class WekaAccess {
 		String[] optionsClassifier = new String[2];
 		String[] optionsEvaluation = new String[2];
 		String[] optionsClassify = new String[2];
+		String[] optionsSaveModel = new String[2];
+		String[] optionsLoadModel = new String[2];
 		System.out.println("");
-		runMenu(fn,optionsRemove,optionsResample,optionsClassifier,optionsEvaluation,optionsClassify);
+		runMenu(fn,optionsRemove,optionsResample,optionsClassifier,optionsEvaluation,optionsSaveModel
+			,optionsClassify,optionsLoadModel);
 		Instances data;
 		try {
 			data = new Instances(loadData(fn[0]));
@@ -262,8 +355,15 @@ public class WekaAccess {
 				data = removeData(data,optionsRemove);
 			if(optionsResample[0]=="B")
 				data = resampleData(data,optionsResample);
-			Classifier yourClassifier = assignClassifierModel(optionsClassifier);
-			doEvalAndClassify(data,optionsEvaluation,yourClassifier);
+			Classifier yourClassifier = null;
+			if(optionsLoadModel[0]=="Y"){
+				doEvalFromLoadModel(data,optionsLoadModel,optionsEvaluation,yourClassifier);
+			} else{
+				yourClassifier = assignClassifierModel(optionsClassifier,fn,optionsSaveModel);
+				doEvalAndClassify(data,optionsEvaluation,yourClassifier);
+				if(optionsSaveModel[0]=="Y")
+					SerializationHelper.write("data\\model\\"+optionsSaveModel[1], yourClassifier);
+			}
 		    if(optionsClassify[0]=="Y")
 		    	doClassifyUnseenData(optionsClassify,yourClassifier);
 		} catch(IOException ioe){
