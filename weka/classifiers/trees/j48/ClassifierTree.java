@@ -631,7 +631,7 @@ public class ClassifierTree
 	double[] weights = localModel().weights(instance);
 	for (int i = 0; i < m_sons.length; i++) {
 	  if (!son(i).m_isEmpty) {
-        prob += son(i).classifyLaplace(classIndex, instance, 
+        prob += son(i).getProbsLaplace(classIndex, instance,
 					     weights[i] * weight);
 	  }
 	}

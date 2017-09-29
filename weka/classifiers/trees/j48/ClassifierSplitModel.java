@@ -43,7 +43,7 @@ public abstract class ClassifierSplitModel
   private static final long serialVersionUID = 4280730118393457457L;
 
   /** Distribution of class values. */  
-  protected Distribution m_distribution;  
+  public Distribution m_distribution;
 
   /** Number of created subsets. */
   protected int m_numSubsets;         
