@@ -25,8 +25,8 @@ public class MyC45ModelSelection
     public final ClassifierSplitModel selectModel(Instances data){
         double minResult;
         double currentResult;
-        C45Split [] currentModel;
-        C45Split bestModel = null;
+        MyC45Split [] currentModel;
+        MyC45Split bestModel = null;
         NoSplit noSplitModel = null;
         double averageInfoGain = 0;
         int validModels = 0;
@@ -62,7 +62,7 @@ public class MyC45ModelSelection
                 }
             }
 
-            currentModel = new C45Split[data.numAttributes()];
+            currentModel = new MyC45Split[data.numAttributes()];
             sumOfWeights = data.sumOfWeights();
 
             // For each attribute.
@@ -72,7 +72,7 @@ public class MyC45ModelSelection
                 if (i != (data).classIndex()){
 
                     // Get models for current attribute.
-                    currentModel[i] = new C45Split(i,m_minNoObj,sumOfWeights);
+                    currentModel[i] = new MyC45Split(i,m_minNoObj,sumOfWeights);
                     currentModel[i].buildClassifier(data);
 
                     // Check if useful split for current attribute

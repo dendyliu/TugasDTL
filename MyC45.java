@@ -72,8 +72,9 @@ public class MyC45
 
         if (m_binarySplits)
             modSelection = new BinC45ModelSelection(m_minNumObj, instances);
-        else
+        else {
             modSelection = new MyC45ModelSelection(m_minNumObj, instances);
+        }
         if (!m_reducedErrorPruning)
             m_root = new MyC45PruneableClassifierTree(modSelection, !m_unpruned, m_CF,
                     m_subtreeRaising, !m_noCleanup);

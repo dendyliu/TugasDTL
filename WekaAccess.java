@@ -68,7 +68,7 @@ public class WekaAccess {
 			} else if(Integer.parseInt(optionsClassifier[0]) == 2){
 				 String[] options = new String[1];
 				 options[0] = "-Q";        
-				 classifier = new J48();        
+				 classifier = new J48();
 				optionsSaveModel[1] = fn[0]+"_C45.model";
 			} else if(Integer.parseInt(optionsClassifier[0]) == 3){
 				classifier = new MyID3();
