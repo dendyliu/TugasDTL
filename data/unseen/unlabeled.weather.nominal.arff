@@ -7,8 +7,5 @@
 @attribute play {yes, no}
 
 @data
-rainy,cool,high,TRUE,?
 sunny,hot,high,FALSE,?
-overcast,hot,high,FALSE,?
-overcast,cool,high,FALSE,?
-sunny,hot,high,TRUE,?
+

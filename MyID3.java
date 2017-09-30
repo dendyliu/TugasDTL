@@ -187,7 +187,7 @@ public class MyID3 extends Classifier {
       return m_ClassValue;
     } else {
       return m_Successors[(int) instance.value(m_Attribute)].
-        classifyInstance(instance);
+        classifyInstance(removeAtrInstance(instance,m_Attribute.index()).firstInstance());
     }
   }
 
@@ -220,9 +220,29 @@ public class MyID3 extends Classifier {
   		System.out.println(e);
   	}
   	return newDataSet;
-
-  
   }
+
+  public String toString(int level) {
+    StringBuffer text = new StringBuffer();
+    if (m_Attribute == null) {
+      if (Instance.isMissingValue(m_ClassValue)) {
+        text.append(": null");
+      } else {
+        text.append(": " + m_ClassAttribute.value((int) m_ClassValue));
+      } 
+    } else {
+      for (int j = 0; j < m_Attribute.numValues(); j++) {
+        text.append("\n");
+        for (int i = 0; i < level; i++) {
+          text.append("|  ");
+        }
+        text.append(m_Attribute.name() + " = " + m_Attribute.value(j));
+        text.append(m_Successors[j].toString(level + 1));
+      }
+    }
+    return text.toString();
+  }
+  
   public static void main(String[] args) {
     runClassifier(new MyID3(), args);
   }
