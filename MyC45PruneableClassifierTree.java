@@ -5,6 +5,8 @@ import weka.core.Utils;
 import weka.core.Capabilities.Capability;
 import weka.classifiers.trees.j48.*;
 
+import java.util.ArrayList;
+
 
 public class MyC45PruneableClassifierTree
         extends ClassifierTree {
@@ -13,22 +15,16 @@ public class MyC45PruneableClassifierTree
 
     float m_CF = 0.25f;
 
-    boolean m_subtreeRaising = true;
-
-    boolean m_cleanup = true;
+    private ArrayList<Rule> listOfRules;
 
     public MyC45PruneableClassifierTree(ModelSelection toSelectLocModel,
-                                      boolean pruneTree,float cf,
-                                      boolean raiseTree,
-                                      boolean cleanup)
+                                      boolean pruneTree,float cf)
             throws Exception {
 
         super(toSelectLocModel);
-
         m_pruneTheTree = pruneTree;
         m_CF = cf;
-        m_subtreeRaising = raiseTree;
-        m_cleanup = cleanup;
+        listOfRules = new ArrayList<>();
     }
 
     public Capabilities getCapabilities() {
@@ -52,106 +48,71 @@ public class MyC45PruneableClassifierTree
     }
 
     public void buildClassifier(Instances data) throws Exception {
-        // can classifier tree handle the data?
         getCapabilities().testWithFail(data);
-
-        // remove instances with missing class
         data = new Instances(data);
         data.deleteWithMissingClass();
-        buildTree(data, m_subtreeRaising || !m_cleanup);
-        collapse();
+        buildTree(data, true);
         if (m_pruneTheTree) {
             prune();
-        }
-        if (m_cleanup) {
-            cleanup(new Instances(data, 0));
-        }
-    }
-
-    public final void collapse(){
-
-        double errorsOfSubtree;
-        double errorsOfTree;
-        int i;
-
-        if (!m_isLeaf){
-            errorsOfSubtree = getTrainingErrors();
-            errorsOfTree = localModel().distribution().numIncorrect();
-            if (errorsOfSubtree >= errorsOfTree-1E-3){
-
-                // Free adjacent trees
-                m_sons = null;
-                m_isLeaf = true;
-
-                // Get NoSplit Model for tree.
-                m_localModel = new NoSplit(localModel().distribution());
-            }else
-                for (i=0;i<m_sons.length;i++)
-                    son(i).collapse();
         }
     }
 
     public void prune() throws Exception {
-        double errorsLargestBranch;
-        double errorsLeaf;
-        double errorsTree;
-        int indexOfLargestBranch;
-        MyC45PruneableClassifierTree largestBranch;
-        int i;
+//        double errorsLargestBranch;
+//        double errorsLeaf;
+//        double errorsTree;
+//        int indexOfLargestBranch;
+//        MyC45PruneableClassifierTree largestBranch;
+//
+//        if (!m_isLeaf){
+//            for (int i = 0; i < m_sons.length; i++) {
+//                son(i).prune();
+//            }
+//
+//            indexOfLargestBranch = localModel().distribution().maxBag();
+//            errorsLargestBranch = son(indexOfLargestBranch).
+//                    getEstimatedErrorsForBranch((Instances)m_train);
+//
+//            errorsLeaf =
+//                    getEstimatedErrorsForDistribution(localModel().distribution());
+//
+//            errorsTree = getEstimatedErrors();
+//
+//            if (Utils.smOrEq(errorsLeaf,errorsTree) && Utils.smOrEq(errorsLeaf,errorsLargestBranch)){
+//                m_sons = null;
+//                m_isLeaf = true;
+//                m_localModel = new NoSplit(localModel().distribution());
+//                return;
+//            }
+//
+//            if (Utils.smOrEq(errorsLargestBranch,errorsTree+0.1)){
+//                largestBranch = son(indexOfLargestBranch);
+//                m_sons = largestBranch.m_sons;
+//                m_localModel = largestBranch.localModel();
+//                m_isLeaf = largestBranch.m_isLeaf;
+//                creteNewDistribution(m_train);
+//                prune();
+//            }
+//        }
+        getRuleList(this, new Rule());
+        //Itung Error disini
+    }
 
-        if (!m_isLeaf){
-
-            // Prune all subtrees.
-            for (i=0;i<m_sons.length;i++)
-                son(i).prune();
-
-            // Compute error for largest branch
-            indexOfLargestBranch = localModel().distribution().maxBag();
-            if (m_subtreeRaising) {
-                errorsLargestBranch = son(indexOfLargestBranch).
-                        getEstimatedErrorsForBranch((Instances)m_train);
-            } else {
-                errorsLargestBranch = Double.MAX_VALUE;
+    private void getRuleList(MyC45PruneableClassifierTree node, Rule rule) {
+        rule.addPreConditions(node);
+        if (!node.m_isLeaf) {
+            for (int i = 0; i < node.m_sons.length; i++) {
+                getRuleList(node.son(i), new Rule(rule));
             }
-
-            // Compute error if this Tree would be leaf
-            errorsLeaf =
-                    getEstimatedErrorsForDistribution(localModel().distribution());
-
-            // Compute error for the whole subtree
-            errorsTree = getEstimatedErrors();
-
-            // Decide if leaf is best choice.
-            if (Utils.smOrEq(errorsLeaf,errorsTree+0.1) &&
-                    Utils.smOrEq(errorsLeaf,errorsLargestBranch+0.1)){
-
-                // Free son Trees
-                m_sons = null;
-                m_isLeaf = true;
-
-                // Get NoSplit Model for node.
-                m_localModel = new NoSplit(localModel().distribution());
-                return;
-            }
-
-            // Decide if largest branch is better choice
-            // than whole subtree.
-            if (Utils.smOrEq(errorsLargestBranch,errorsTree+0.1)){
-                largestBranch = son(indexOfLargestBranch);
-                m_sons = largestBranch.m_sons;
-                m_localModel = largestBranch.localModel();
-                m_isLeaf = largestBranch.m_isLeaf;
-                newDistribution(m_train);
-                prune();
-            }
+        } else {
+            listOfRules.add(rule);
         }
     }
 
     protected ClassifierTree getNewTree(Instances data) throws Exception {
         MyC45PruneableClassifierTree newTree =
-                new MyC45PruneableClassifierTree(m_toSelectModel, m_pruneTheTree, m_CF,
-                        m_subtreeRaising, m_cleanup);
-        newTree.buildTree((Instances)data, m_subtreeRaising || !m_cleanup);
+                new MyC45PruneableClassifierTree(m_toSelectModel, m_pruneTheTree, m_CF);
+        newTree.buildTree((Instances)data, true);
 
         return newTree;
     }
@@ -163,8 +124,9 @@ public class MyC45PruneableClassifierTree
         if (m_isLeaf)
             return getEstimatedErrorsForDistribution(localModel().distribution());
         else{
-            for (i=0;i<m_sons.length;i++)
-                errors = errors+son(i).getEstimatedErrors();
+            for (i=0;i<m_sons.length;i++) {
+                errors = errors + son(i).getEstimatedErrors();
+            }
             return errors;
         }
     }
@@ -173,42 +135,42 @@ public class MyC45PruneableClassifierTree
             throws Exception {
         Instances [] localInstances;
         double errors = 0;
-        int i;
 
-        if (m_isLeaf)
+        if (m_isLeaf) {
             return getEstimatedErrorsForDistribution(new Distribution(data));
-        else{
+        } else {
             Distribution savedDist = localModel().m_distribution;
             localModel().resetDistribution(data);
             localInstances = (Instances[])localModel().split(data);
             localModel().m_distribution = savedDist;
-            for (i=0;i<m_sons.length;i++)
-                errors = errors+
+            for (int i = 0; i < m_sons.length; i++) {
+                errors = errors +
                         son(i).getEstimatedErrorsForBranch(localInstances[i]);
+            }
             return errors;
         }
     }
 
     private double getEstimatedErrorsForDistribution(Distribution
                                                              theDistribution){
-        if (Utils.eq(theDistribution.total(),0))
+        if (Utils.eq(theDistribution.total(),0)) {
             return 0;
-        else
-            return theDistribution.numIncorrect()+
+        } else {
+            return theDistribution.numIncorrect() +
                     Stats.addErrs(theDistribution.total(),
-                            theDistribution.numIncorrect(),m_CF);
+                            theDistribution.numIncorrect(), m_CF);
+        }
     }
 
     private double getTrainingErrors(){
-
         double errors = 0;
         int i;
-
-        if (m_isLeaf)
+        if (m_isLeaf) {
             return localModel().distribution().numIncorrect();
-        else{
-            for (i=0;i<m_sons.length;i++)
-                errors = errors+son(i).getTrainingErrors();
+        } else {
+            for (i=0;i<m_sons.length;i++) {
+                errors = errors + son(i).getTrainingErrors();
+            }
             return errors;
         }
     }
@@ -217,19 +179,17 @@ public class MyC45PruneableClassifierTree
         return (ClassifierSplitModel)m_localModel;
     }
 
-    private void newDistribution(Instances data) throws Exception {
+    private void creteNewDistribution(Instances data) throws Exception {
         Instances [] localInstances;
-
         localModel().resetDistribution(data);
         m_train = data;
         if (!m_isLeaf){
             localInstances =
                     (Instances [])localModel().split(data);
-            for (int i = 0; i < m_sons.length; i++)
-                son(i).newDistribution(localInstances[i]);
+            for (int i = 0; i < m_sons.length; i++) {
+                son(i).creteNewDistribution(localInstances[i]);
+            }
         } else {
-
-            // Check whether there are some instances at the leaf now!
             if (!Utils.eq(data.sumOfWeights(), 0)) {
                 m_isEmpty = false;
             }

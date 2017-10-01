@@ -53,7 +53,7 @@ public class MyC45
 
         try {
             if (!m_reducedErrorPruning)
-                result = new MyC45PruneableClassifierTree(null, !m_unpruned, m_CF, m_subtreeRaising, !m_noCleanup).getCapabilities();
+                result = new MyC45PruneableClassifierTree(null, !m_unpruned, m_CF).getCapabilities();
             else
                 result = new PruneableClassifierTree(null, !m_unpruned, m_numFolds, !m_noCleanup, m_Seed).getCapabilities();
         }
@@ -75,13 +75,13 @@ public class MyC45
         else {
             modSelection = new MyC45ModelSelection(m_minNumObj, instances);
         }
-        if (!m_reducedErrorPruning){
-            m_root = new MyC45PruneableClassifierTree(modSelection, !m_unpruned, m_CF,
-                    m_subtreeRaising, !m_noCleanup);
-        }
-        else
+
+        if (!m_reducedErrorPruning) {
+            m_root = new MyC45PruneableClassifierTree(modSelection, !m_unpruned, m_CF);
+        } else {
             m_root = new PruneableClassifierTree(modSelection, !m_unpruned, m_numFolds,
                     !m_noCleanup, m_Seed);
+        }
         m_root.buildClassifier(instances);
         if (m_binarySplits) {
             ((BinC45ModelSelection)modSelection).cleanup();
