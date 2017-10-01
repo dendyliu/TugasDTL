@@ -9,7 +9,7 @@ public class Rule {
     }
 
     public Rule(Rule rule) {
-        preConditions = rule.getPreConditions();
+        preConditions = new ArrayList<>(rule.getPreConditions());
     }
 
     public void addPreCondition(MyC45PruneableClassifierTree node) {

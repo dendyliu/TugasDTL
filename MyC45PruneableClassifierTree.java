@@ -52,6 +52,13 @@ public class MyC45PruneableClassifierTree
         data = new Instances(data);
         data.deleteWithMissingClass();
         buildTree(data, true);
+        getRuleList(this, new Rule());
+        int i = 0;
+        for(Rule rule : listOfRules) {
+            System.out.println("THIS IS RULE : " + i);
+            rule.printPreConditions();
+            i++;
+        }
         if (m_pruneTheTree) {
             prune();
         }
@@ -94,8 +101,6 @@ public class MyC45PruneableClassifierTree
 //                prune();
 //            }
 //        }
-        getRuleList(this, new Rule());
-        //Itung Error disini
     }
 
     private void getRuleList(MyC45PruneableClassifierTree node, Rule rule) {
