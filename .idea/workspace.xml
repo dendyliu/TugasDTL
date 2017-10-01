@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="945905ba-6865-4dd2-be8d-25d4ba269c57" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyC45.class" afterPath="$PROJECT_DIR$/MyC45.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyC45PruneableClassifierTree.class" afterPath="$PROJECT_DIR$/MyC45PruneableClassifierTree.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyID3.class" afterPath="$PROJECT_DIR$/MyID3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WekaAccess.class" afterPath="$PROJECT_DIR$/WekaAccess.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rule.class" afterPath="$PROJECT_DIR$/Rule.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyC45.java" afterPath="$PROJECT_DIR$/MyC45.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyC45PruneableClassifierTree.java" afterPath="$PROJECT_DIR$/MyC45PruneableClassifierTree.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Rule.java" afterPath="$PROJECT_DIR$/Rule.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -88,8 +86,8 @@
       <file leaf-file-name="Rule.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Rule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="11" column="47" lean-forward="false" selection-start-line="11" selection-start-column="47" selection-end-line="11" selection-end-column="47" />
+            <state relative-caret-position="374">
+              <caret line="25" column="9" lean-forward="true" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
               <folding>
                 <element signature="e#251#252#0" expanded="true" />
                 <element signature="e#306#307#0" expanded="true" />
@@ -105,14 +103,14 @@
       <file leaf-file-name="MyC45PruneableClassifierTree.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MyC45PruneableClassifierTree.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="95" column="11" lean-forward="true" selection-start-line="95" selection-start-column="11" selection-end-line="95" selection-end-column="11" />
+            <state relative-caret-position="102">
+              <caret line="96" column="38" lean-forward="false" selection-start-line="96" selection-start-column="38" selection-end-line="96" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#6337#6338#0" expanded="true" />
-                <element signature="e#6403#6404#0" expanded="true" />
-                <marker date="1506854184166" expanded="false" signature="5661:5671" ph=" { " />
-                <marker date="1506854184166" expanded="false" signature="5713:5719" ph=" }" />
+                <element signature="e#6336#6337#0" expanded="true" />
+                <element signature="e#6402#6403#0" expanded="true" />
+                <marker date="1506855050293" expanded="false" signature="5660:5670" ph=" { " />
+                <marker date="1506855050293" expanded="false" signature="5712:5718" ph=" }" />
               </folding>
             </state>
           </provider>
@@ -121,7 +119,7 @@
       <file leaf-file-name="ClassifierTree.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/weka/classifiers/trees/j48/ClassifierTree.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
+            <state relative-caret-position="-7038">
               <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
               <folding>
                 <element signature="e#0#18438#0" expanded="true" />
@@ -232,9 +230,9 @@
       <find>removeA</find>
       <find>isresampl</find>
       <find>resample</find>
-      <find>classify</find>
       <find>Rule</find>
       <find>unseen</find>
+      <find>classify</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -745,10 +743,10 @@
           <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6337#6338#0" expanded="true" />
-            <element signature="e#6403#6404#0" expanded="true" />
-            <marker date="1506854184166" expanded="false" signature="5661:5671" ph=" { " />
-            <marker date="1506854184166" expanded="false" signature="5713:5719" ph=" }" />
+            <element signature="e#6336#6337#0" expanded="true" />
+            <element signature="e#6402#6403#0" expanded="true" />
+            <marker date="1506855050293" expanded="false" signature="5660:5670" ph=" { " />
+            <marker date="1506855050293" expanded="false" signature="5712:5718" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -779,10 +777,10 @@
           <caret line="158" column="0" lean-forward="false" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6337#6338#0" expanded="true" />
-            <element signature="e#6403#6404#0" expanded="true" />
-            <marker date="1506854184166" expanded="false" signature="5661:5671" ph=" { " />
-            <marker date="1506854184166" expanded="false" signature="5713:5719" ph=" }" />
+            <element signature="e#6336#6337#0" expanded="true" />
+            <element signature="e#6402#6403#0" expanded="true" />
+            <marker date="1506855050293" expanded="false" signature="5660:5670" ph=" { " />
+            <marker date="1506855050293" expanded="false" signature="5712:5718" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -916,10 +914,10 @@
           <caret line="158" column="0" lean-forward="true" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6337#6338#0" expanded="true" />
-            <element signature="e#6403#6404#0" expanded="true" />
-            <marker date="1506854184166" expanded="false" signature="5661:5671" ph=" { " />
-            <marker date="1506854184166" expanded="false" signature="5713:5719" ph=" }" />
+            <element signature="e#6336#6337#0" expanded="true" />
+            <element signature="e#6402#6403#0" expanded="true" />
+            <marker date="1506855050293" expanded="false" signature="5660:5670" ph=" { " />
+            <marker date="1506855050293" expanded="false" signature="5712:5718" ph=" }" />
           </folding>
         </state>
       </provider>
@@ -1173,27 +1171,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/weka/classifiers/trees/j48/ClassifierTree.java">
+    <entry file="file://$PROJECT_DIR$/WekaAccess.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+        <state relative-caret-position="-357">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#18438#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Rule.java">
+    <entry file="file://$PROJECT_DIR$/weka/classifiers/trees/j48/ClassifierTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="11" column="47" lean-forward="false" selection-start-line="11" selection-start-column="47" selection-end-line="11" selection-end-column="47" />
+        <state relative-caret-position="-7038">
+          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
           <folding>
-            <element signature="e#251#252#0" expanded="true" />
-            <element signature="e#306#307#0" expanded="true" />
-            <element signature="e#376#377#0" expanded="true" />
-            <element signature="e#415#416#0" expanded="true" />
-            <element signature="e#488#489#0" expanded="true" />
-            <element signature="e#524#525#0" expanded="true" />
+            <element signature="e#0#18438#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1250,26 +1243,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WekaAccess.java">
+    <entry file="file://$PROJECT_DIR$/Rule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-357">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="374">
+          <caret line="25" column="9" lean-forward="true" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#251#252#0" expanded="true" />
+            <element signature="e#306#307#0" expanded="true" />
+            <element signature="e#376#377#0" expanded="true" />
+            <element signature="e#415#416#0" expanded="true" />
+            <element signature="e#488#489#0" expanded="true" />
+            <element signature="e#524#525#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MyC45PruneableClassifierTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="95" column="11" lean-forward="true" selection-start-line="95" selection-start-column="11" selection-end-line="95" selection-end-column="11" />
+        <state relative-caret-position="102">
+          <caret line="96" column="38" lean-forward="false" selection-start-line="96" selection-start-column="38" selection-end-line="96" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6337#6338#0" expanded="true" />
-            <element signature="e#6403#6404#0" expanded="true" />
-            <marker date="1506854184166" expanded="false" signature="5661:5671" ph=" { " />
-            <marker date="1506854184166" expanded="false" signature="5713:5719" ph=" }" />
+            <element signature="e#6336#6337#0" expanded="true" />
+            <element signature="e#6402#6403#0" expanded="true" />
+            <marker date="1506855050293" expanded="false" signature="5660:5670" ph=" { " />
+            <marker date="1506855050293" expanded="false" signature="5712:5718" ph=" }" />
           </folding>
         </state>
       </provider>

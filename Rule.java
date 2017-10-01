@@ -19,4 +19,10 @@ public class Rule {
     public ArrayList<MyC45PruneableClassifierTree> getPreConditions() {
         return preConditions;
     }
+
+    public void printPreConditions() {
+        for (MyC45PruneableClassifierTree tree : preConditions) {
+            System.out.println(tree.toString());
+        }
+    }
 }

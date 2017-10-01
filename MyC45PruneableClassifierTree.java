@@ -99,7 +99,7 @@ public class MyC45PruneableClassifierTree
     }
 
     private void getRuleList(MyC45PruneableClassifierTree node, Rule rule) {
-        rule.addPreConditions(node);
+        rule.addPreCondition(node);
         if (!node.m_isLeaf) {
             for (int i = 0; i < node.m_sons.length; i++) {
                 getRuleList(node.son(i), new Rule(rule));
