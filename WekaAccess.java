@@ -88,13 +88,13 @@ public class WekaAccess {
 				Id3 model = (Id3) cls;
 				model_string = model.toString();
 			} else if(Integer.parseInt(optionsClassifier[0]) == 2){
-			    Id3 model = (Id3) cls;
+			    J48 model = (J48) cls;
 				model_string = model.toString();
 			} else if(Integer.parseInt(optionsClassifier[0]) == 3){
 				MyID3 model = (MyID3) cls;
 				model_string = model.toString(0);
 			} else if(Integer.parseInt(optionsClassifier[0]) == 4){
-				Id3 model = (Id3) cls;
+				MyC45 model = (MyC45) cls;
 				model_string = model.toString();
 			}
 		System.out.println("Model Tree: \n" +model_string +"\n");	
@@ -121,7 +121,7 @@ public class WekaAccess {
 			eval = new Evaluation(data);
 			eval.evaluateModel(cls,test_data);
 		}
-		printDTLModel(cls,optionsClassifier);
+
 		System.out.print(eval.toSummaryString("\nEvaluation Results\n===================================================================", false));
 		System.out.println("===================================================================");
 		System.out.println("Building classifier finish!");

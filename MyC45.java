@@ -75,9 +75,10 @@ public class MyC45
         else {
             modSelection = new MyC45ModelSelection(m_minNumObj, instances);
         }
-        if (!m_reducedErrorPruning)
+        if (!m_reducedErrorPruning){
             m_root = new MyC45PruneableClassifierTree(modSelection, !m_unpruned, m_CF,
                     m_subtreeRaising, !m_noCleanup);
+        }
         else
             m_root = new PruneableClassifierTree(modSelection, !m_unpruned, m_numFolds,
                     !m_noCleanup, m_Seed);
@@ -368,7 +369,19 @@ public class MyC45
         m_noCleanup = v;
     }
 
+    public String toString() {
+    if (m_root == null) {
+      return "No classifier built";
+    }
+        if (m_unpruned)
+          return "MyC45 unpruned tree\n------------------\n" + m_root.toString();
+        else
+          return "MyC45 pruned tree\n------------------\n" + m_root.toString();
+      }
+
     public static void main(String [] argv){
         runClassifier(new MyC45(), argv);
     }
+
+
 }

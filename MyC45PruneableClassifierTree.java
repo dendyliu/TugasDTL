@@ -58,7 +58,6 @@ public class MyC45PruneableClassifierTree
         // remove instances with missing class
         data = new Instances(data);
         data.deleteWithMissingClass();
-
         buildTree(data, m_subtreeRaising || !m_cleanup);
         collapse();
         if (m_pruneTheTree) {

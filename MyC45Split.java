@@ -3,9 +3,8 @@ import weka.core.Instances;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.classifiers.trees.j48.*;
-
+import java.util.*;
 import java.util.Enumeration;
-
 public class MyC45Split
         extends ClassifierSplitModel{
 
@@ -126,9 +125,30 @@ public class MyC45Split
         }
     }
 
-    private void handleNumericAttribute(Instances trainInstances)
-            throws Exception {
+    public List<Integer> generate(int n) {
+          List<Integer> arr = new ArrayList<>(n);
+          for (int i = 0; i < n; i++) {
+           arr.add(i + 1);
+          }
+          System.out.println("input  :" + arr);
 
+          Random rand = new Random();
+          int r; // stores random number
+          int tmp;
+
+          //shuffle above input array
+          for (int i = n; i > 0; i--) {
+           r = rand.nextInt(i);
+           
+           tmp = arr.get(i - 1);
+           arr.set(i - 1, arr.get(r));
+           arr.set(r, tmp);
+          }
+          return arr;
+    }
+
+
+    private void handleNumericAttribute(Instances trainInstances)throws Exception {
         int firstMiss;
         int next = 1;
         int last = 0;
@@ -138,7 +158,6 @@ public class MyC45Split
         double minSplit;
         Instance instance;
         int i;
-
         // Current attribute is a numeric attribute.
         m_distribution = new Distribution(2,trainInstances.numClasses());
 
@@ -148,12 +167,11 @@ public class MyC45Split
         while (enu.hasMoreElements()) {
             instance = (Instance) enu.nextElement();
             if (instance.isMissing(m_attIndex))
-                break; //TODO: ganti dengan most common value
+                break;
             m_distribution.add(1,instance);
             i++;
         }
         firstMiss = i;
-
         // Compute minimum number of Instances required in each
         // subset.
         minSplit =  0.1*(m_distribution.total())/
@@ -167,43 +185,56 @@ public class MyC45Split
         // Enough Instances with known values?
         if (Utils.sm((double)firstMiss,2*minSplit))
             return;
-
         // Compute values of criteria for all possible split
         // indices.
+        ArrayList<Distribution> distributionArr = new ArrayList<Distribution>();
         defaultEnt = infoGainCrit.oldEnt(m_distribution);
         while (next < firstMiss) {
-
-            if (trainInstances.instance(next-1).value(m_attIndex)+1e-5 <
-                    trainInstances.instance(next).value(m_attIndex)) {
-
+            if (trainInstances.instance(next-1).value(m_attIndex)+1e-5 < 
+            trainInstances.instance(next).value(m_attIndex)) { 
                 // Move class values for all Instances up to next
                 // possible split point.
                 m_distribution.shiftRange(1,0,trainInstances,last,next);
-
                 // Check if enough Instances in each subset and compute
                 // values for criteria.
                 if (Utils.grOrEq(m_distribution.perBag(0),minSplit) &&
                         Utils.grOrEq(m_distribution.perBag(1),minSplit)) {
-                    currentInfoGain = infoGainCrit.
-                            splitCritValue(m_distribution,m_sumOfWeights,
-                                    defaultEnt);
-                    if (Utils.gr(currentInfoGain,m_infoGain)) {
-                        m_infoGain = currentInfoGain;
-                        splitIndex = next-1;
-                    }
+                    //Add distribution that available to subset
+                    Distribution dist = (Distribution) m_distribution.clone();
+                    distributionArr.add(dist);
                     m_index++;
                 }
                 last = next;
             }
             next++;
         }
-
+        //Pick max 10 random distrbution from array of distribution 
+        Random randomizer = new Random();
+        int maxIteration = 10;
+        int n=0;
+        if(distributionArr.size()<10)
+            maxIteration = distributionArr.size();
+        List<Integer> uniqueNumbers = generate(distributionArr.size());
+        while(n < maxIteration){
+            int idx = uniqueNumbers.get(n)-1;
+            System.out.println("idx: "+idx);
+            Distribution currentDistribution = distributionArr.get(idx);
+            currentInfoGain = infoGainCrit.splitCritValue(currentDistribution,m_sumOfWeights,
+                defaultEnt);
+            System.out.println(currentInfoGain);
+            if (Utils.gr(currentInfoGain,m_infoGain)) {
+                m_infoGain = currentInfoGain;
+                splitIndex = idx;
+            } 
+            n++;
+        }
+        System.out.println("==================================");
         // Was there any useful split?
         if (m_index == 0)
             return;
 
         // Compute modified information gain for best split.
-        m_infoGain = m_infoGain-(Utils.log2(m_index)/m_sumOfWeights);
+         m_infoGain = m_infoGain-(Utils.log2(m_index)/m_sumOfWeights);
         if (Utils.smOrEq(m_infoGain,0))
             return;
 

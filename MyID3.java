@@ -55,12 +55,9 @@ public class MyID3 extends Classifier {
   }
 
   private void makeTree(Instances data) throws Exception {
-    if (data.numAttributes()-1  < 1){
-    	makeLeaf(data);
-    	return;
-    }
-    if(isOneClassExample(data)){
-    	makeLeaf(data);
+    
+    if(isOneClassOrEmptyAttribute(data)){
+        makeLeaf(data);
     }else{
     	m_Attribute = chooseBestAttribute(data);
 	    Instances[] splitData = splitData(data, m_Attribute);
@@ -74,7 +71,20 @@ public class MyID3 extends Classifier {
 			    m_Successors[j].makeTree(splitData[j]);
 		  	}
 	    }
-	}
+    }
+  }
+
+  private boolean isOneClassOrEmptyAttribute(Instances data) throws Exception{
+    double[] infoGains = new double[data.numAttributes()];
+    Enumeration attEnum = data.enumerateAttributes();
+    while (attEnum.hasMoreElements()) {
+      Attribute att = (Attribute) attEnum.nextElement();
+      infoGains[att.index()]  = computeInfoGain(data, att);
+    }
+    m_Attribute = data.attribute(Utils.maxIndex(infoGains));
+    if (Utils.eq(infoGains[m_Attribute.index()], 0))
+      return true;
+    return false;
   }
   //Cek if data example just just have one class distribution
   private boolean isOneClassExample(Instances data) throws Exception{
@@ -158,7 +168,6 @@ public class MyID3 extends Classifier {
 	}
 	for (int i = 0; i < splitData.length; i++) {
 	    splitData[i].compactify();
-	    splitData[i] = removeAttributeNode(splitData[i],att.index());
 	}
     return splitData;
   }
@@ -187,7 +196,7 @@ public class MyID3 extends Classifier {
       return m_ClassValue;
     } else {
       return m_Successors[(int) instance.value(m_Attribute)].
-        classifyInstance(removeAtrInstance(instance,m_Attribute.index()).firstInstance());
+        classifyInstance(instance);
     }
   }
 
@@ -199,7 +208,7 @@ public class MyID3 extends Classifier {
       return m_Distribution;
     } else { 
       return m_Successors[(int) instance.value(m_Attribute)].
-        distributionForInstance(removeAtrInstance(instance,m_Attribute.index()).firstInstance());
+        distributionForInstance(instance);
     }
   }
 
